@@ -6,10 +6,12 @@ var router = express.Router();
 var bodyParser = require('body-parser');
 var User = require('../../models/User');
 var bearerToken = require('../../config.js').bearerToken;
+var profile = require('../../profile.json');
 
 router.get('/', function(req, res){
   res.render('index');
 });
+
 
 
 router.route('/fetchUser')
@@ -32,6 +34,29 @@ router.route('/fetchUser')
   request(options, function(error, response, body) {
     if (!error) {
       user.tweets = body;
+
+      var PersonalityInsightsV3 = require('watson-developer-cloud/personality-insights/v3');
+      var personality_insights = new PersonalityInsightsV3({
+        username: '34442ff0-5fd6-4772-ba9e-9e7a1fe3dad5',
+        password: 'heBS6eLUnyDQ',
+        version_date: '2017-10-13'
+      });
+
+      var params = {
+        // Get the content from the JSON file.
+        content: profile,
+        content_type: 'application/json',
+        raw_scores: true
+      };
+
+      personality_insights.profile(params, function(error, response) {
+        if (error)
+          console.log('Error:', error);
+        else
+          console.log(JSON.stringify(response, null, 2));
+        }
+      );
+
       user.save(function(err) {
         if (err)
           res.send(err);
