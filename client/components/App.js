@@ -8,8 +8,9 @@ class App extends Component {
     super(props);
     this.state = {
       value: '',
-      tweets: [],
+      username: '',
       personality: [],
+      matches: [],
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -29,8 +30,11 @@ class App extends Component {
           "Content-Type": "application/x-www-form-urlencoded"
         }
       }).then((response) => {
+        console.log(response);
         this.setState({
-          personality: response.data,
+          personality: response.data.personality,
+          matches: response.data.matches,
+          username: response.data.name,
         });
       });
     event.preventDefault();
@@ -67,11 +71,6 @@ class App extends Component {
             <div className="table-responsive">
               <table className="table">
                 <tbody>
-                  {this.state.tweets.map((tweet, i) =>
-                    <tr key={i}>
-                      <td>{tweet}</td>
-                    </tr>
-                  )}
                 </tbody>
               </table>
             </div>
